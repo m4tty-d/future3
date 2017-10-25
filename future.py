@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 
 import os
-import networkx as nx
-import numpy as np
-from numpy import linalg as LA
 import collections as cl
 import copy as cp
+import networkx as nx
+import numpy as np
 import matplotlib.pyplot as plt
 
 def main():
@@ -23,23 +22,21 @@ def main():
         for file in files:
             file_full_path = root + os.sep + file
 
-            FILE = open(file_full_path, 'r')
-
             G.add_node(file_full_path)
 
-            i = 0
+            with open(file_full_path) as f:
 
-            for line in FILE:
-                # az első sorban van az adott csoport számossága
-                if i == 0:
-                    population += int(line)
-                    nodes_with_cardinality[file_full_path] = int(line)
-                else:
-                    G.add_edge(file_full_path, "".join(line.rsplit('\n')))
+                i = 0
 
-                i += 1
+                for line in f:
+                    # az első sorban van az adott csoport számossága
+                    if i == 0:
+                        population += int(line)
+                        nodes_with_cardinality[file_full_path] = int(line)
+                    else:
+                        G.add_edge(file_full_path, line.rstrip('\n'))
 
-            FILE.close()
+                    i += 1
 
     n = len(list(G.nodes))
 
@@ -51,8 +48,10 @@ def main():
     # a node-okat is név szerint rendezem
     nodes = cl.OrderedDict(enumerate(sorted(list(G.nodes))))
 
+    # a vectorba a relatív gyakoriságok kerülnek
     vector = np.asarray( [(i/population) for i in nodes_with_cardinality.values()] )
 
+    # sztochasztikus mátrix felépítése
     for i in nodes.keys():
         for j in nodes.keys():
             neighbors = list(nx.all_neighbors(G, nodes[i]))
@@ -72,7 +71,7 @@ def main():
 
         vector = vector.dot(matrix)
 
-        if LA.norm(pv - vector) < 0.00000001:
+        if np.linalg.norm(pv - vector) < 0.00000001:
             break
 
         for i in range(len(vector)):
