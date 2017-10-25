@@ -42,8 +42,6 @@ def main():
             FILE.close()
 
     n = len(list(G.nodes))
-    print(list(G.nodes))
-    print(n)
 
     matrix = np.zeros( (n,n) )
 
@@ -81,10 +79,6 @@ def main():
             print("{} - {}".format(nodes[i], population*vector[i]) )
 
         iteracio += 1
-        #s = 0
-        #for v in np.nditer(vector):
-        #    s += v
-        #print("\nÖsszeg: {}".format(s))
 
     nx.draw(G, with_labels=True)
     plt.show()
